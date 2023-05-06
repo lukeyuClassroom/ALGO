@@ -1,4 +1,4 @@
-# vue-project
+# vuesax-project
 
 ## Project setup
 ```
