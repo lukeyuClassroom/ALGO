@@ -1,29 +1,29 @@
 <template>
     <div class="main">
         <div class="input-form">
-            <vs-input border v-model="value" placeholder="Name" />
+            <vs-select v-model="params.fun" label-placeholder="Algorithm">
+                <vs-option :key="index" v-for="fun, index in funs" v-bind:label="fun" v-bind:value="fun">
+                    {{ fun }}
+                </vs-option>
+            </vs-select>
 
-            <vs-input color="#7d33ff" border type="password" v-model="value2" placeholder="Password">
-            </vs-input>
+            <vs-input border v-model="params.e2" label-placeholder="BM on Section Mx/kNm" />
 
-            <vs-input border warn type="email" icon-after v-model="value3" label-placeholder="Address">
-            </vs-input>
+            <vs-input border v-model="params.e3" label-placeholder="BM on Section My/kNm" />
 
-            <vs-input border v-model="value" placeholder="Name" />
+            <vs-input border v-model="params.e4" label-placeholder="Axial Load Compression/kN" />
 
-            <vs-input color="#7d33ff" border type="password" v-model="value2" placeholder="Password">
-            </vs-input>
+            <vs-input border v-model="params.e5" label-placeholder="Length of Section/m" />
 
-            <vs-input border warn type="email" icon-after v-model="value3" label-placeholder="Address">
+            <vs-input border v-model="params.e7" label-placeholder="Axial Load Tension/kN" />
 
-            </vs-input>
         </div>
 
         <div class="button-panel">
-            <vs-button gradient :active="active == 1" @click="active = 1">
+            <vs-button gradient :active="active == 1" @click="submit">
                 Submit
             </vs-button>
-            <vs-button warn :active="active == 1" @click="active = 1">
+            <vs-button warn :active="active == 1" @click="reset">
                 Reset
             </vs-button>
         </div>
@@ -31,11 +31,11 @@
         <div class="desc">
             <p>
                 The concept of algorithm has existed since antiquity. Arithmetic algorithms, such as a division algorithm,
-                was used by ancient Babylonian mathematicians c. 2500 BC and Egyptian mathematicians c. 1550 BC.[10] Greek
-                mathematicians later used algorithms in 240 BC in the sieve of Eratosthenes for finding prime numbers,[11]
-                and the Euclidean algorithm for finding the greatest common divisor of two numbers.[12] Arabic
+                was used by ancient Babylonian mathematicians c. 2500 BC and Egyptian mathematicians c. 1550 BC. Greek
+                mathematicians later used algorithms in 240 BC in the sieve of Eratosthenes for finding prime numbers,
+                and the Euclidean algorithm for finding the greatest common divisor of two numbers. Arabic
                 mathematicians such as al-Kindi in the 9th century used cryptographic algorithms for code-breaking, based on
-                frequency analysis.[13]
+                frequency analysis.
             </p>
         </div>
         <vs-dialog not-center not-close v-model="active">
@@ -62,12 +62,60 @@
 <script>
 import RequestForm from './RequestForm.vue'
 import ResultTable from './ResultTable.vue'
+import axios from "axios"
 export default {
     components: { RequestForm, ResultTable },
     data: () => ({
-        active: 0,
-        active3: true
-    })
+        active: false,
+        funs: ['C8975', 'C20019', 'C20024', 'C25019', 'C25024', 'C30024', 'C89-38-75', 'C89-38-95', 'C89-40-75', 'C89-40-95', 'C89-41-75', 'C89-41-95', 'C91-41-75', 'C91-41-95'],
+        params: {
+            fun: '',
+            e2: '',
+            e3: '',
+            e4: '',
+            e5: '',
+            e7: ''
+        }, result: {
+        }
+    }),
+    methods: {
+        submit() {
+            const config = {
+                headers: {
+                    'token': localStorage.getItem('token')
+                    // 'token':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuYW1lIiwiaXNzIjoiYWRtaW4iLCJleHAiOjE2ODQ0MDcwMzUsImlhdCI6MTY4NDQwMzQzNSwicm9sIjoiUk9MRV9BRE1JTiJ9.5vCpd7Zf7DQwS4Lt1koxRZWVee0Z_-ad9QDdq-v2UGF5PFAXhgxJ52zXt5sov3meR_Mpa4GEqODNamGFzOFu4g'
+                }
+            }
+            if (config.headers.token === '') {
+
+                var color = 'warn';
+                var position = 'top-center'
+                this.$vs.notification({
+                    color,
+                    position,
+                    text: 'Please Sign In First'
+                })
+                return
+            }
+            axios.post("http://8.142.88.250:8088/doCalc", this.params, config)
+            .then((result) => { 
+                console.log(result.data); 
+                this.result = result.data 
+                this.active = true
+            }).catch((err) => console.log(err))
+            //axios.post("http://127.0.0.1:8088/doCalc", this.params, config).then((result) => { console.log(result.data); this.result = result.data }).catch((err) => console.log(err))
+        },
+        reset() {
+            this.params = {
+                fun: '',
+                e2: '',
+                e3: '',
+                e4: '',
+                e5: '',
+                e7: ''
+            }
+        },
+    }
 }
 </script>
 
@@ -82,7 +130,8 @@ export default {
 }
 
 .input-form,
-.button-panel, .desc {
+.button-panel,
+.desc {
     width: 80%;
     margin-top: 32px;
     display: flex;
@@ -186,4 +235,5 @@ export default {
 
 .footer-dialog .vs-button {
     margin: 0px;
-}</style>
+}
+</style>
