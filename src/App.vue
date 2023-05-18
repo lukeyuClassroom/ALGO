@@ -1,34 +1,36 @@
 <template>
   <div class="container">
-    <div class="left">
+    <div class="left-part">
       <ISideBar></ISideBar>
     </div>
-    <div class="right"></div>
+    <div class="main-part">
+      <IMain></IMain>
+    </div>
   </div>
 </template>
 <script>
 import ISideBar from './components/SideBar.vue';
+import IMain from './components/Main.vue';
 export default{
-    components: { ISideBar }
+    components: { ISideBar, IMain }
 }
 </script>
 <style>
 .container {
   position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  display: flex;
 }
 
-.left {
-  width: 30%;
-  height: 100%;
+.left-part {
+  min-width: 300px;
 }
 
-.right {
-  width: 80%;
-  height: 100%;
+.main-part {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
 }
 </style>

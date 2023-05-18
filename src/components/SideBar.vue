@@ -1,6 +1,6 @@
 <template>
   <div class="hidden">
-    <vs-sidebar absolute v-model="activeMenu" open>
+    <vs-sidebar style="width: calc(100% - 25px);" absolute v-model="activeMenu" open>
       <template #logo>
         <img src="../assets/algo-logo.png" alt="algo-logo" style="max-width: 60%;max-height: 100%;">
       </template>
