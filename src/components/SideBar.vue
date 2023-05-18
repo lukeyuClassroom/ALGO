@@ -48,14 +48,13 @@
       </vs-sidebar-item>
       <template #footer>
         <vs-row justify="space-between">
-          <vs-avatar @click="activeDialog = !activeDialog">
-            <img v-if="signStatus" v-bind:src="avatarUrl" alt="">
-            <i v-if="!signStatus" class='bx bx-happy'></i>
+          <vs-avatar>
+            <img v-if="signStatus" src="../avatars/avatar-5.png" alt="">
+            <i v-if="!signStatus" class='bx bx-log-in' @click="activeDialog = !activeDialog"></i>
           </vs-avatar>
 
-          <vs-avatar>
+          <vs-avatar v-if="signStatus">
             <i v-if="signStatus" class='bx bx-log-out' @click="signOut"></i>
-            <i v-if="!signStatus" class='bx bx-log-in' @click="activeDialog = !activeDialog"></i>
           </vs-avatar>
         </vs-row>
       </template>
@@ -71,7 +70,7 @@
       <div class="con-form">
         <vs-input v-model="loginForm.username" label-placeholder="Username">
           <template #icon>
-            <i class='bx bxs-man'></i>
+            <i class='bx bxs-male'></i>
           </template>
         </vs-input>
         <vs-input type="password" v-model="loginForm.password" label-placeholder="Password">
@@ -108,7 +107,6 @@ export default {
       username: '',
       password: ''
     },
-    avatarUrl: '',
     userToken: '',
     form: false,
     loading: false,
@@ -139,7 +137,6 @@ export default {
         }).then(res => {
           // console.log(res.headers['token']);
           _this.userToken = res.headers['token'];
-          _this.avatarUrl = 'img/avatar-5.cb833982.png'
           // 将用户token保存到vuex中
           localStorage.setItem('token', _this.userToken)
           _this.activeDialog = false
@@ -170,7 +167,7 @@ export default {
       localStorage.setItem('token', '')
       this.avatarUrl = ''
 
-      _this.signStatus = false
+      this.signStatus = false
       var color = 'success';
       var position = 'top-center'
       this.$vs.notification({
