@@ -49,7 +49,7 @@
       <template #footer>
         <vs-row justify="space-between">
           <vs-avatar>
-            <img v-if="signStatus" src="../avatars/avatar-5.png" alt="">
+            <i v-if="signStatus" class='bx bxs-hot' alt="" />
             <i v-if="!signStatus" class='bx bx-log-in' @click="activeDialog = !activeDialog"></i>
           </vs-avatar>
 
@@ -70,7 +70,7 @@
       <div class="con-form">
         <vs-input v-model="loginForm.username" label-placeholder="Username">
           <template #icon>
-            <i class='bx bxs-male'></i>
+            <i class='bx bxs-user'></i>
           </template>
         </vs-input>
         <vs-input type="password" v-model="loginForm.password" label-placeholder="Password">
@@ -80,6 +80,7 @@
         </vs-input>
         <div class="flex">
           <vs-checkbox v-model="rememberMe">Remember me</vs-checkbox>
+          <!-- <vs-switch /><span>Remember me</span> -->
           <a href="#">Forgot Password?</a>
         </div>
       </div>
@@ -101,7 +102,11 @@
 <script>
 import axios from "axios"
 export default {
+  props:{
+    activeSignInDialog: false,
+  },
   data: () => ({
+    activeDialog: false,
     signStatus: false,
     loginForm: {
       username: '',
@@ -111,16 +116,17 @@ export default {
     form: false,
     loading: false,
     activeMenu: 'home',
-    activeDialog: false,
     loading: false,
-    input1: '',
-    input2: '',
     rememberMe: false,
     notificationNumber: 0
   }),
   watch: {
     activeDialog: function () {
       this.loading = false
+      this.$emit('resetSignInDialogStatus', this.activeDialog)
+    },
+    activeSignInDialog: function(val){
+      this.activeDialog = val
     }
   },
   methods: {

@@ -1,18 +1,32 @@
 <template>
   <div class="container">
     <div class="left-part">
-      <ISideBar></ISideBar>
+      <ISideBar :activeSignInDialog="activeSignInDialog" @resetSignInDialogStatus="resetSignInDialogStatus"></ISideBar>
     </div>
     <div class="main-part">
-      <IMain></IMain>
+      <IMain @needSignInEvent="needSignIn"></IMain>
     </div>
   </div>
 </template>
 <script>
 import ISideBar from './components/SideBar.vue';
 import IMain from './components/Main.vue';
-export default{
-    components: { ISideBar, IMain }
+export default {
+  components: { ISideBar, IMain },
+
+  data: () => ({
+    activeSignInDialog: false
+  }),
+  methods: {
+    needSignIn(val) {
+      this.activeSignInDialog = val
+      console.log('needSignIn+'+val)
+    },
+    resetSignInDialogStatus(val){
+      this.activeSignInDialog = val
+      console.log('resetSignInDialogStatus+'+val)
+    }
+  }
 }
 </script>
 <style>

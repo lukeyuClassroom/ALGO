@@ -1,7 +1,7 @@
 <template>
     <div class="main">
         <div class="input-form">
-            <vs-select v-model="params.fun" label-placeholder="Algorithm">
+            <vs-select color="success" v-model="params.fun" label-placeholder="Algorithm">
                 <vs-option :key="index" v-for="fun, index in funs" v-bind:label="fun" v-bind:value="fun">
                     {{ fun }}
                 </vs-option>
@@ -43,7 +43,7 @@
                 <h2>Thanks for Waiting &#128516;</h2>
             </div>
             <div class="con-content">
-                <ResultTable></ResultTable>
+                <ResultTable v-bind="result"></ResultTable>
             </div>
 
             <template #footer>
@@ -51,9 +51,9 @@
                     <vs-button @click="active = false" gradient>
                         Ok
                     </vs-button>
-                    <vs-button @click="active = false" dark gradient>
+                    <!-- <vs-button @click="active = false" dark gradient>
                         Cancel
-                    </vs-button>
+                    </vs-button> -->
                 </div>
             </template>
         </vs-dialog>
@@ -86,7 +86,8 @@ export default {
                     // 'token':'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJuYW1lIiwiaXNzIjoiYWRtaW4iLCJleHAiOjE2ODQ0MDcwMzUsImlhdCI6MTY4NDQwMzQzNSwicm9sIjoiUk9MRV9BRE1JTiJ9.5vCpd7Zf7DQwS4Lt1koxRZWVee0Z_-ad9QDdq-v2UGF5PFAXhgxJ52zXt5sov3meR_Mpa4GEqODNamGFzOFu4g'
                 }
             }
-            if (config.headers.token === '') {
+            console.log(config.headers.token)
+            if (!config.headers.token) {
 
                 var color = 'warn';
                 var position = 'top-center'
@@ -95,14 +96,37 @@ export default {
                     position,
                     text: 'Please Sign In First'
                 })
+                this.$emit('needSignInEvent', true)
                 return
             }
+            if (!this.params.fun) {
+
+                var color = 'warn';
+                var position = 'top-center'
+                this.$vs.notification({
+                    color,
+                    position,
+                    text: 'Please chose function'
+                })
+                return
+            }
+            var type = 'points'
+            const loading = this.$vs.loading({
+                type: type,
+                opacity: 0.9,
+                filter: blur(0.7)
+            })
             axios.post("http://8.142.88.250:8088/doCalc", this.params, config)
-            .then((result) => { 
-                console.log(result.data); 
-                this.result = result.data 
-                this.active = true
-            }).catch((err) => console.log(err))
+                .then((result) => {
+                    this.result = result.data
+                    this.result.fun = this.params.fun
+                    // console.log(this.result); 
+
+                    setTimeout(() => {
+                        loading.close()
+                        this.active = true
+                    }, 500)
+                }).catch((err) => console.log(err))
             //axios.post("http://127.0.0.1:8088/doCalc", this.params, config).then((result) => { console.log(result.data); this.result = result.data }).catch((err) => console.log(err))
         },
         reset() {
@@ -149,6 +173,13 @@ export default {
 
 .input-form {
     margin-top: 100px;
+}
+
+vs-select>input {
+    background-color: transparent;
+    border-radius: 0px;
+    border-color: rgb(240, 243, 244);
+    border-width: 0 0 2px 0;
 }
 
 .vs-dialog {
