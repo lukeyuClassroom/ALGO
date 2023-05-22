@@ -20,10 +20,10 @@
         </div>
 
         <div class="button-panel">
-            <vs-button gradient :active="active == 1" @click="submit">
+            <vs-button gradient @click="submit">
                 Submit
             </vs-button>
-            <vs-button warn :active="active == 1" @click="reset">
+            <vs-button warn @click="reset">
                 Reset
             </vs-button>
         </div>
@@ -38,25 +38,9 @@
                 frequency analysis.
             </p>
         </div>
-        <vs-dialog not-center not-close v-model="active">
-            <div class="header-dialog">
-                <h2>Thanks for Waiting &#128516;</h2>
-            </div>
-            <div class="con-content">
-                <ResultTable v-bind="result"></ResultTable>
-            </div>
 
-            <template #footer>
-                <div class="con-footer">
-                    <vs-button @click="active = false" gradient>
-                        Ok
-                    </vs-button>
-                    <!-- <vs-button @click="active = false" dark gradient>
-                        Cancel
-                    </vs-button> -->
-                </div>
-            </template>
-        </vs-dialog>
+        <ResultTable v-bind="result" :showResult="showResult" @hideResult="hideResult"></ResultTable>
+            
     </div>
 </template>
 <script>
@@ -66,7 +50,7 @@ import axios from "axios"
 export default {
     components: { RequestForm, ResultTable },
     data: () => ({
-        active: false,
+        showResult: false,
         funs: ['C8975', 'C20019', 'C20024', 'C25019', 'C25024', 'C30024', 'C89-38-75', 'C89-38-95', 'C89-40-75', 'C89-40-95', 'C89-41-75', 'C89-41-95', 'C91-41-75', 'C91-41-95'],
         params: {
             fun: '',
@@ -124,7 +108,7 @@ export default {
 
                     setTimeout(() => {
                         loading.close()
-                        this.active = true
+                        this.showResult = true
                     }, 500)
                 }).catch((err) => console.log(err))
             //axios.post("http://127.0.0.1:8088/doCalc", this.params, config).then((result) => { console.log(result.data); this.result = result.data }).catch((err) => console.log(err))
@@ -139,12 +123,16 @@ export default {
                 e7: ''
             }
         },
+        hideResult(){
+            this.showResult = false
+        }
     }
 }
 </script>
 
 <style scoped>
 .main {
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
@@ -162,6 +150,9 @@ export default {
     justify-content: center;
 }
 
+.input-form {
+    margin-top: 100px;
+}
 .desc {
     padding: 4px 12px;
     border-style: solid;
@@ -169,102 +160,5 @@ export default {
     border-width: 4px;
     border-radius: 12px;
 
-}
-
-.input-form {
-    margin-top: 100px;
-}
-
-vs-select>input {
-    background-color: transparent;
-    border-radius: 0px;
-    border-color: rgb(240, 243, 244);
-    border-width: 0 0 2px 0;
-}
-
-.vs-dialog {
-    width: 80%;
-    min-width: 600px;
-}
-
-.vs-dialog-content {
-    padding-top: 20px;
-}
-
-.header-dialog {
-    display: flex;
-    justify-content: center;
-}
-
-.con-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-}
-
-.con-footer .vs-button {
-    margin: 0px;
-}
-
-.con-footer .vs-button .vs-button__content {
-    padding: 10px 30px;
-}
-
-.con-footer .vs-button~.vs-button {
-    margin-left: 10px;
-}
-
-.con-content {
-    width: 100%;
-}
-
-.con-content p {
-    font-size: 0.8rem;
-    padding: 0px 10px;
-}
-
-.con-content .vs-checkbox-label {
-    font-size: 0.8rem;
-}
-
-.con-content .vs-input-parent {
-    width: 100%;
-}
-
-.con-content .vs-input-content {
-    margin: 10px 0px;
-    width: calc(100%);
-}
-
-.con-content .vs-input-content .vs-input {
-    width: 100%;
-}
-
-.footer-dialog {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: calc(100%);
-}
-
-.footer-dialog .new {
-    margin: 0px;
-    margin-top: 20px;
-    padding: 0px;
-    font-size: 0.7rem;
-}
-
-.footer-dialog .new a {
-    color: getColor('primary') !important;
-    margin-left: 6px;
-}
-
-.footer-dialog .new a:hover {
-    text-decoration: underline;
-}
-
-.footer-dialog .vs-button {
-    margin: 0px;
 }
 </style>

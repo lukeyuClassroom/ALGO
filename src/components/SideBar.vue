@@ -50,7 +50,7 @@
         <vs-row justify="space-between">
           <vs-avatar>
             <i v-if="signStatus" class='bx bxs-hot' alt="" />
-            <i v-if="!signStatus" class='bx bx-log-in' @click="activeDialog = !activeDialog"></i>
+            <i v-if="!signStatus" class='bx bx-log-in' @click="signIn"></i>
           </vs-avatar>
 
           <vs-avatar v-if="signStatus">
@@ -59,128 +59,30 @@
         </vs-row>
       </template>
     </vs-sidebar>
-    <vs-dialog v-bind:loading="loading" blur not-close overflow-hidden v-model="activeDialog">
-      <template #header>
-        <h4 class="not-margin">
-          Please Login
-        </h4>
-      </template>
-
-
-      <div class="con-form">
-        <vs-input v-model="loginForm.username" label-placeholder="Username">
-          <template #icon>
-            <i class='bx bxs-user'></i>
-          </template>
-        </vs-input>
-        <vs-input type="password" v-model="loginForm.password" label-placeholder="Password">
-          <template #icon>
-            <i class='bx bxs-lock'></i>
-          </template>
-        </vs-input>
-        <div class="flex">
-          <vs-checkbox v-model="rememberMe">Remember me</vs-checkbox>
-          <!-- <vs-switch /><span>Remember me</span> -->
-          <a href="#">Forgot Password?</a>
-        </div>
-      </div>
-
-      <template #footer>
-        <div class="footer-dialog">
-          <vs-button block @click="signIn">
-            Sign In
-          </vs-button>
-
-          <div class="new">
-            New Here? <a href="#">Create New Account</a>
-          </div>
-        </div>
-      </template>
-    </vs-dialog>
   </div>
 </template>
 <script>
-import axios from "axios"
 export default {
   props:{
-    activeSignInDialog: false,
+    signInStatus: false
   },
   data: () => ({
-    activeDialog: false,
-    signStatus: false,
-    loginForm: {
-      username: '',
-      password: ''
-    },
-    userToken: '',
-    form: false,
-    loading: false,
     activeMenu: 'home',
-    loading: false,
-    rememberMe: false,
-    notificationNumber: 0
+    signStatus: false
   }),
-  watch: {
-    activeDialog: function () {
-      this.loading = false
-      this.$emit('resetSignInDialogStatus', this.activeDialog)
-    },
-    activeSignInDialog: function(val){
-      this.activeDialog = val
-    }
-  },
   methods: {
-    signIn() {
-      let _this = this;
-      if (this.loginForm.username === '' || this.loginForm.password === '') {
-        alert('账号或密码不能为空');
-      } else {
-        _this.loading = true;
-        axios({
-          method: 'post',
-          url: 'http://8.142.88.250:8088/login',
-          data: _this.loginForm
-        }).then(res => {
-          // console.log(res.headers['token']);
-          _this.userToken = res.headers['token'];
-          // 将用户token保存到vuex中
-          localStorage.setItem('token', _this.userToken)
-          _this.activeDialog = false
-          _this.signStatus = true
-          var color = 'success';
-          var position = 'top-center'
-          this.$vs.notification({
-            color,
-            position,
-            text: 'Sign In Success, Enjoy'
-          })
-        }).catch(error => {
-          console.log(error)
-          var color = 'danger';
-          var position = 'top-center'
-          this.$vs.notification({
-            color,
-            position,
-            text: 'Wrong Username or Password, Please try again'
-          })
-        }).finally(() => {
-
-          _this.loading = false;
-        });
-      }
+    signIn(){
+      this.$emit('needSignInEvent', true)
     },
     signOut() {
-      localStorage.setItem('token', '')
-      this.avatarUrl = ''
-
       this.signStatus = false
-      var color = 'success';
-      var position = 'top-center'
-      this.$vs.notification({
-        color,
-        position,
-        text: 'Sign Out Success, Bye'
-      })
+      this.avatarUrl = ''
+      this.$emit('signOut','')
+    }
+  },
+  watch:{
+    signInStatus(val){
+      this.signStatus = val
     }
   }
 }
