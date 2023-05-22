@@ -211,7 +211,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .result-table {
   flex-grow: 1;
   display: flex;

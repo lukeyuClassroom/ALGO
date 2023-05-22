@@ -110,7 +110,10 @@ export default {
                         loading.close()
                         this.showResult = true
                     }, 500)
-                }).catch((err) => console.log(err))
+                }).catch((err) => {
+                    console.log(err)
+                    loading.close()
+                })
             //axios.post("http://127.0.0.1:8088/doCalc", this.params, config).then((result) => { console.log(result.data); this.result = result.data }).catch((err) => console.log(err))
         },
         reset() {
@@ -132,11 +135,11 @@ export default {
 
 <style scoped>
 .main {
-    max-width: 1000px;
+    min-width: 1000px;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    overflow: hidden;
+    overflow: scroll;
     justify-content: flex-start;
     align-items: center;
 }
